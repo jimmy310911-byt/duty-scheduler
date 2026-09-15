@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Calendar as CalendarIcon, Users, Settings, AlertCircle, BarChart3, CheckCircle2, ChevronRight, ChevronLeft, Table as TableIcon, Download, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Users, Settings, AlertCircle, BarChart3, CheckCircle2, ChevronRight, ChevronLeft, Table as TableIcon, Download, Loader2, FileSpreadsheet } from 'lucide-react';
 
 // 根據使用者提供的明確日期，定義農曆過年期間 (不排班)
 const CNY_DATES = [
@@ -103,6 +103,7 @@ export default function DutyScheduler() {
   const [stats, setStats] = useState([]);
   const [hasGenerated, setHasGenerated] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -354,6 +355,128 @@ export default function DutyScheduler() {
       console.error("下載圖片失敗:", error);
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  const downloadAsExcel = async () => {
+    setIsDownloadingExcel(true);
+    try {
+      if (!window.XLSX) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      const wb = window.XLSX.utils.book_new();
+
+      // 第一分頁：積分總覽與統計
+      const summaryData = [
+        ["累積積分總覽表"],
+        ["人員", "組別", "常規班積分", "週日班積分", "總積分", `中斷連假 (+${config.middlePoints}分) 次數`]
+      ];
+      stats.forEach(p => {
+        summaryData.push([
+          p.name,
+          p.group,
+          p.regularPoints,
+          p.sundayPoints,
+          p.regularPoints + p.sundayPoints,
+          p.interruptedLwCount
+        ]);
+      });
+      
+      // 在 Excel 中留一些空行，再附上特殊加分明細(等同柱狀圖細節)
+      summaryData.push([]);
+      summaryData.push(["各人員特殊加分明細 (排班日紀錄)"]);
+      stats.forEach(p => {
+        summaryData.push([`【${p.name}】 常規班特殊積分日:`]);
+        const regDetails = p.regularDates
+          .map(d => ({ date: d, pts: dutyPointsMap[d] || 1 }))
+          .filter(item => item.pts > 1)
+          .map(item => `${item.date} (+${item.pts}分)`);
+        summaryData.push(regDetails.length > 0 ? regDetails : ["無"]);
+        
+        summaryData.push([`【${p.name}】 週日班特殊積分日:`]);
+        const sunDetails = p.sundayDates
+          .map(d => ({ date: d, pts: dutyPointsMap[d] || 1 }))
+          .filter(item => item.pts > 1)
+          .map(item => `${item.date} (+${item.pts}分)`);
+        summaryData.push(sunDetails.length > 0 ? sunDetails : ["無"]);
+        summaryData.push([]);
+      });
+
+      const summarySheet = window.XLSX.utils.aoa_to_sheet(summaryData);
+      
+      // 調整首頁欄寬
+      summarySheet['!cols'] = [{wch: 20}, {wch: 10}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 25}];
+      window.XLSX.utils.book_append_sheet(wb, summarySheet, "積分總覽");
+
+      // 分頁：各月份排班表
+      const { startDate, duration } = config;
+      const [sYear, sMonth] = startDate.split('-').map(Number);
+      let currentDate = new Date(sYear, sMonth - 1, 1);
+
+      for (let m = 0; m < duration; m++) {
+        const currentYear = currentDate.getFullYear();
+        const currentMonthIndex = currentDate.getMonth();
+        const daysInMonth = new Date(currentYear, currentMonthIndex + 1, 0).getDate();
+
+        const monthData = [
+          [`${currentYear}年${currentMonthIndex + 1}月 排班表`],
+          ["日期", ...stats.map(p => `${p.name} (${p.group}區)`)]
+        ];
+
+        for (let i = 1; i <= daysInMonth; i++) {
+          const dateObj = new Date(currentYear, currentMonthIndex, i);
+          const dateStr = formatDateObj(dateObj);
+          const dayOfWeek = dateObj.getDay();
+          const dutyInfo = scheduleMap[dateStr];
+          const isCNY = CNY_DATES.includes(dateStr);
+
+          let dayLabel = "";
+          if (isCNY) dayLabel = " (春節)";
+          else if (SUNDAY_DUTY_DATES.includes(dateStr)) dayLabel = " (週日)";
+          else if (REGULAR_DUTY_DATES.includes(dateStr) && dayOfWeek !== 6) dayLabel = " (國假)";
+          else if (REGULAR_DUTY_DATES.includes(dateStr) && dayOfWeek === 6) dayLabel = " (週六)";
+
+          const dateText = `${currentMonthIndex + 1}/${i} (${WEEKDAYS[dayOfWeek]})${dayLabel}`;
+          const rowData = [dateText];
+
+          stats.forEach(person => {
+            const isAssigned = dutyInfo && dutyInfo.assignments.some(a => a.id === person.id);
+            if (isAssigned) {
+              const assignmentDetail = dutyInfo.assignments.find(a => a.id === person.id);
+              let cellText = dutyInfo.type !== 'sunday' ? assignmentDetail.group : '✓';
+              if (dutyInfo.earnedPoints > 1) {
+                cellText += ` (+${dutyInfo.earnedPoints})`;
+              }
+              rowData.push(cellText);
+            } else {
+              rowData.push("");
+            }
+          });
+          monthData.push(rowData);
+        }
+
+        const monthSheet = window.XLSX.utils.aoa_to_sheet(monthData);
+        // 調整月份表欄寬
+        const cols = [{wch: 20}]; // 日期欄位
+        stats.forEach(() => cols.push({wch: 15})); // 人員欄位
+        monthSheet['!cols'] = cols;
+
+        window.XLSX.utils.book_append_sheet(wb, monthSheet, `${currentYear}年${currentMonthIndex + 1}月`);
+        currentDate.setMonth(currentDate.getMonth() + 1);
+      }
+
+      window.XLSX.writeFile(wb, `排班表_${config.startDate.replace(/-/g, '')}.xlsx`);
+    } catch (error) {
+      console.error("下載 EXCEL 失敗:", error);
+    } finally {
+      setIsDownloadingExcel(false);
     }
   };
 
@@ -802,7 +925,19 @@ export default function DutyScheduler() {
         {hasGenerated && (
           <div className="mt-8 space-y-4">
             
-            <div className="flex justify-end mb-2">
+            <div className="flex flex-wrap justify-end gap-3 mb-2">
+              <button 
+                onClick={downloadAsExcel} 
+                disabled={isDownloadingExcel}
+                className="flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDownloadingExcel ? (
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                ) : (
+                  <FileSpreadsheet className="w-5 h-5 mr-2" />
+                )}
+                {isDownloadingExcel ? '處理中...' : '下載 EXCEL (表格)'}
+              </button>
               <button 
                 onClick={downloadAsImage} 
                 disabled={isDownloading}
@@ -813,7 +948,7 @@ export default function DutyScheduler() {
                 ) : (
                   <Download className="w-5 h-5 mr-2" />
                 )}
-                {isDownloading ? '圖片生成中...' : '下載排班表與統計圖'}
+                {isDownloading ? '圖片生成中...' : '下載圖片 (完整版面)'}
               </button>
             </div>
 
