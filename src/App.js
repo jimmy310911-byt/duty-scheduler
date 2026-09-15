@@ -3,25 +3,19 @@ import { Calendar as CalendarIcon, Users, Settings, AlertCircle, BarChart3, Chec
 
 // 根據使用者提供的明確日期，定義農曆過年期間 (不排班)
 const CNY_DATES = [
-  // 2026年
   '2026-02-14', '2026-02-15', '2026-02-16', '2026-02-17', '2026-02-18', '2026-02-19', '2026-02-20', '2026-02-21', '2026-02-22',
-  // 2027年
   '2027-02-04', '2027-02-05', '2027-02-06', '2027-02-07', '2027-02-08', '2027-02-09', '2027-02-10'
 ];
 
 // 根據使用者提供的明確日期，定義週日排班日
 const SUNDAY_DUTY_DATES = [
-  // 2026年
   '2026-01-04', '2026-01-11', '2026-01-18', '2026-01-25', '2026-02-01', '2026-02-08', '2026-03-01', '2026-03-08', '2026-03-15', '2026-03-22', '2026-03-29', '2026-04-05', '2026-04-12', '2026-04-19', '2026-04-26', '2026-05-03', '2026-05-10', '2026-05-17', '2026-05-24', '2026-05-31', '2026-06-07', '2026-06-14', '2026-06-21', '2026-06-28', '2026-07-05', '2026-07-12', '2026-07-19', '2026-07-26', '2026-08-02', '2026-08-09', '2026-08-16', '2026-08-23', '2026-08-30', '2026-09-06', '2026-09-13', '2026-09-20', '2026-09-27', '2026-10-04', '2026-10-11', '2026-10-18', '2026-10-25', '2026-11-01', '2026-11-08', '2026-11-15', '2026-11-22', '2026-11-29', '2026-12-06', '2026-12-13', '2026-12-20', '2026-12-27',
-  // 2027年
   '2027-01-03', '2027-01-10', '2027-01-17', '2027-01-24', '2027-01-31', '2027-02-14', '2027-02-21', '2027-02-28', '2027-03-07', '2027-03-14', '2027-03-21', '2027-03-28', '2027-04-04', '2027-04-11', '2027-04-18', '2027-04-25', '2027-05-02', '2027-05-09', '2027-05-16', '2027-05-23', '2027-05-30', '2027-06-06', '2027-06-13', '2027-06-20', '2027-06-27', '2027-07-04', '2027-07-11', '2027-07-18', '2027-07-25', '2027-08-01', '2027-08-08', '2027-08-15', '2027-08-22', '2027-08-29', '2027-09-05', '2027-09-12', '2027-09-19', '2027-09-26', '2027-10-03', '2027-10-10', '2027-10-17', '2027-10-24', '2027-10-31', '2027-11-07', '2027-11-14', '2027-11-21', '2027-11-28', '2027-12-05', '2027-12-12', '2027-12-19', '2027-12-26'
 ];
 
 // 根據使用者提供的明確日期，定義常規排班日 (週六或彈性假日、國定假日)
 const REGULAR_DUTY_DATES = [
-  // 2026年
   '2026-01-01', '2026-01-03', '2026-01-10', '2026-01-17', '2026-01-24', '2026-01-31', '2026-02-07', '2026-02-27', '2026-02-28', '2026-03-07', '2026-03-14', '2026-03-21', '2026-03-28', '2026-04-03', '2026-04-04', '2026-04-06', '2026-04-11', '2026-04-18', '2026-04-25', '2026-05-01', '2026-05-02', '2026-05-09', '2026-05-16', '2026-05-23', '2026-05-30', '2026-06-06', '2026-06-13', '2026-06-19', '2026-06-20', '2026-06-27', '2026-07-04', '2026-07-11', '2026-07-18', '2026-07-25', '2026-08-01', '2026-08-08', '2026-08-15', '2026-08-22', '2026-08-29', '2026-09-05', '2026-09-12', '2026-09-19', '2026-09-25', '2026-09-26', '2026-09-28', '2026-10-03', '2026-10-09', '2026-10-10', '2026-10-17', '2026-10-24', '2026-10-26', '2026-10-31', '2026-11-07', '2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05', '2026-12-12', '2026-12-19', '2026-12-25', '2026-12-26',
-  // 2027年
   '2027-01-01', '2027-01-02', '2027-01-09', '2027-01-16', '2027-01-23', '2027-01-30', '2027-02-13', '2027-02-20', '2027-02-27', '2027-03-01', '2027-03-06', '2027-03-13', '2027-03-20', '2027-03-27', '2027-04-03', '2027-04-05', '2027-04-06', '2027-04-10', '2027-04-17', '2027-04-24', '2027-04-30', '2027-05-01', '2027-05-08', '2027-05-15', '2027-05-22', '2027-05-29', '2027-06-05', '2027-06-09', '2027-06-12', '2027-06-19', '2027-06-26', '2027-07-03', '2027-07-10', '2027-07-17', '2027-07-24', '2027-07-31', '2027-08-07', '2027-08-14', '2027-08-21', '2027-08-28', '2027-09-04', '2027-09-11', '2027-09-15', '2027-09-18', '2027-09-25', '2027-09-28', '2027-10-02', '2027-10-09', '2027-10-11', '2027-10-16', '2027-10-23', '2027-10-25', '2027-10-30', '2027-11-06', '2027-11-13', '2027-11-20', '2027-11-27', '2027-12-04', '2027-12-11', '2027-12-18', '2027-12-24', '2027-12-25', '2027-12-31'
 ];
 
@@ -37,24 +31,23 @@ const formatDateObj = (date) => {
   return formatDate(date.getFullYear(), date.getMonth(), date.getDate());
 };
 
-// 計算連續假期的特殊積分 (連假中間日給予 2 分補償)
 const ALL_DUTY_DATES = [...new Set([...SUNDAY_DUTY_DATES, ...REGULAR_DUTY_DATES])].sort((a, b) => new Date(a) - new Date(b));
 
 export default function DutyScheduler() {
   const [config, setConfig] = useState({
-    numPeople: 6, // 預設 6 人，方便分 3A 3B
+    numPeople: 6, // 預設 6 人
     startDate: '2026-10-01', 
     duration: 3, 
     viewMode: 'calendar',
     startRegularA: 1, 
     startRegularB: 2, 
     startSunday: 1,
-    edgePoints: 2,   // 新增：連假頭尾積分
-    middlePoints: 3  // 新增：中斷連假積分
+    edgePoints: 1,   // 連假頭尾積分 (預設1)
+    middlePoints: 1  // 連假中間積分 (預設1)
   });
   
-  // 動態運算排班點數地圖 (根據設定值的變更自動重算)
-  const dutyPointsMap = useMemo(() => {
+  // 動態運算排班點數地圖，獨立標記 isMiddle 與 isEdge
+  const dutyMetaMap = useMemo(() => {
     const map = {};
     let currentBlock = [];
     
@@ -72,17 +65,17 @@ export default function DutyScheduler() {
       }
 
       if (!isConsecutive) {
-         // 如果連續放假 3 天(含)以上，套用自訂的頭尾與中斷積分
+         // 連續放假 3 天(含)以上
          if (currentBlock.length >= 3) {
-            map[currentBlock[0]] = config.edgePoints;
-            map[currentBlock[currentBlock.length - 1]] = config.edgePoints;
+            map[currentBlock[0]] = { points: config.edgePoints, isEdge: true, isMiddle: false };
+            map[currentBlock[currentBlock.length - 1]] = { points: config.edgePoints, isEdge: true, isMiddle: false };
             for (let j = 1; j < currentBlock.length - 1; j++) {
-               map[currentBlock[j]] = config.middlePoints;
+               map[currentBlock[j]] = { points: config.middlePoints, isEdge: false, isMiddle: true };
             }
          } else {
-            // 一般週末 2 天或單一假日皆為 1 分
+            // 一般週末 2 天或單一假日
             for (let j = 0; j < currentBlock.length; j++) {
-               map[currentBlock[j]] = 1;
+               map[currentBlock[j]] = { points: 1, isEdge: false, isMiddle: false };
             }
          }
          currentBlock = [];
@@ -91,7 +84,6 @@ export default function DutyScheduler() {
     return map;
   }, [config.edgePoints, config.middlePoints]);
 
-  // 使用物件陣列同時儲存姓名與 A/B 工區群組
   const [peopleConfig, setPeopleConfig] = useState(
     Array(6).fill(null).map((_, i) => ({
       name: '',
@@ -157,7 +149,8 @@ export default function DutyScheduler() {
       lastSundayDuty: null,
       regularDates: [],
       sundayDates: [],
-      interruptedLwCount: 0,
+      middleLwCount: 0,
+      edgeLwCount: 0,
       monthlyCounts: {} 
     }));
 
@@ -166,11 +159,9 @@ export default function DutyScheduler() {
       sundayQueue.push(((startSunday - 1 + i) % numPeople) + 1);
     }
 
-    // 準備 A, B 兩組的獨立序列
     let groupAIds = peopleStats.filter(p => p.group === 'A').map(p => p.id);
     let groupBIds = peopleStats.filter(p => p.group === 'B').map(p => p.id);
 
-    // 依照指定的起始人員調整 Queue 的順序
     let regularQueueA = [...groupAIds];
     if (groupAIds.includes(startRegularA)) {
        const idx = groupAIds.indexOf(startRegularA);
@@ -191,30 +182,30 @@ export default function DutyScheduler() {
     let lastDutyDateObj = null; 
     let lastDayWorkers = new Set(); 
 
-    // 選人演算法：加入防呆機制與 +2 分優先分配
-    const pickPerson = (queue, pointKey, blockWorkers, stats, previousDayWorkers, earnedPoints, currentMonthKey) => {
+    const pickPerson = (queue, pointKey, blockWorkers, stats, previousDayWorkers, isMiddle, isEdge, currentMonthKey) => {
       if (!queue || queue.length === 0) return null;
 
-      // 1. 嚴格篩選：不在本次連假出勤過，且「不是上一個排班日」出勤的人 (防止跨週連上)
       let eligibleIds = queue.filter(id => !blockWorkers.has(id) && !previousDayWorkers.has(id));
 
       if (eligibleIds.length === 0) {
-        // 放寬條件 1：如果人數太少導致卡死，允許上一個排班日出勤的人 (但仍不可在同一連假出勤)
         eligibleIds = queue.filter(id => !blockWorkers.has(id));
       }
 
       if (eligibleIds.length === 0) {
-        // 放寬條件 2：防呆，如果所有人都排過了，強制全部開放重選
         eligibleIds = queue; 
       }
 
-      // 2. 針對高積分(中斷連假)的日子：強制優先挑選「累積中斷次數」最少的人
-      if (earnedPoints === config.middlePoints) {
-        const minInterruptedCount = Math.min(...eligibleIds.map(id => stats.find(p => p.id === id).interruptedLwCount));
-        eligibleIds = eligibleIds.filter(id => stats.find(p => p.id === id).interruptedLwCount === minInterruptedCount);
+      // 優先保障連假中間與頭尾的平均分配
+      if (isMiddle) {
+        const minMiddleCount = Math.min(...eligibleIds.map(id => stats.find(p => p.id === id).middleLwCount));
+        eligibleIds = eligibleIds.filter(id => stats.find(p => p.id === id).middleLwCount === minMiddleCount);
+      }
+      else if (isEdge) {
+        const minEdgeCount = Math.min(...eligibleIds.map(id => stats.find(p => p.id === id).edgeLwCount));
+        eligibleIds = eligibleIds.filter(id => stats.find(p => p.id === id).edgeLwCount === minEdgeCount);
       }
 
-      // 3. 針對「同一個月內不要值到二次以上」的軟限制 (單月排班平均化)
+      // 單月次數平均分配
       let underCapIds = eligibleIds.filter(id => (stats.find(p => p.id === id).monthlyCounts[currentMonthKey] || 0) < 2);
       
       if (underCapIds.length === 0) {
@@ -224,7 +215,6 @@ export default function DutyScheduler() {
       
       eligibleIds = underCapIds;
 
-      // 4. 在剩下的候選人中，找尋積分最低者
       const minPts = Math.min(...eligibleIds.map(id => stats.find(p => p.id === id)[pointKey]));
       const chosenIdx = queue.findIndex(id => eligibleIds.includes(id) && stats.find(p => p.id === id)[pointKey] === minPts);
       
@@ -256,12 +246,17 @@ export default function DutyScheduler() {
         lastDutyDateObj = new Date(d);
 
         if (isSunday) {
-          const earnedPoints = dutyPointsMap[dateStr] || 1;
-          const chosenPerson = pickPerson(sundayQueue, 'sundayPoints', currentBlockWorkers, peopleStats, lastDayWorkers, earnedPoints, currentMonthKey);
+          const dutyMeta = dutyMetaMap[dateStr] || { points: 1, isMiddle: false, isEdge: false };
+          const earnedPoints = dutyMeta.points;
+          const isMiddle = dutyMeta.isMiddle;
+          const isEdge = dutyMeta.isEdge;
+
+          const chosenPerson = pickPerson(sundayQueue, 'sundayPoints', currentBlockWorkers, peopleStats, lastDayWorkers, isMiddle, isEdge, currentMonthKey);
 
           if (chosenPerson) {
               chosenPerson.sundayPoints += earnedPoints;
-              if (earnedPoints === config.middlePoints) chosenPerson.interruptedLwCount += 1;
+              if (isMiddle) chosenPerson.middleLwCount += 1;
+              if (isEdge) chosenPerson.edgeLwCount += 1;
               chosenPerson.monthlyCounts[currentMonthKey] = (chosenPerson.monthlyCounts[currentMonthKey] || 0) + 1;
               chosenPerson.lastSundayDuty = new Date(d);
               chosenPerson.sundayDates.push(dateStr);
@@ -270,21 +265,27 @@ export default function DutyScheduler() {
               generatedScheduleMap[dateStr] = {
                 assignments: [{ id: chosenPerson.id, name: chosenPerson.name, group: chosenPerson.group }],
                 type: 'sunday',
-                earnedPoints: earnedPoints
+                earnedPoints: earnedPoints,
+                isMiddle: isMiddle,
+                isEdge: isEdge
               };
               
               lastDayWorkers = new Set([chosenPerson.id]);
           }
         } else if (isRegular) {
-          const earnedPoints = dutyPointsMap[dateStr] || 1;
+          const dutyMeta = dutyMetaMap[dateStr] || { points: 1, isMiddle: false, isEdge: false };
+          const earnedPoints = dutyMeta.points;
+          const isMiddle = dutyMeta.isMiddle;
+          const isEdge = dutyMeta.isEdge;
+
           let assignments = [];
           
-          // 挑選 A 區負責人
           if (regularQueueA.length > 0) {
-            const chosenA = pickPerson(regularQueueA, 'regularPoints', currentBlockWorkers, peopleStats, lastDayWorkers, earnedPoints, currentMonthKey);
+            const chosenA = pickPerson(regularQueueA, 'regularPoints', currentBlockWorkers, peopleStats, lastDayWorkers, isMiddle, isEdge, currentMonthKey);
             if (chosenA) {
                 chosenA.regularPoints += earnedPoints;
-                if (earnedPoints === config.middlePoints) chosenA.interruptedLwCount += 1;
+                if (isMiddle) chosenA.middleLwCount += 1;
+                if (isEdge) chosenA.edgeLwCount += 1;
                 chosenA.monthlyCounts[currentMonthKey] = (chosenA.monthlyCounts[currentMonthKey] || 0) + 1;
                 chosenA.lastRegularDuty = new Date(d);
                 chosenA.regularDates.push(dateStr);
@@ -293,12 +294,12 @@ export default function DutyScheduler() {
             }
           }
 
-          // 挑選 B 區負責人
           if (regularQueueB.length > 0) {
-            const chosenB = pickPerson(regularQueueB, 'regularPoints', currentBlockWorkers, peopleStats, lastDayWorkers, earnedPoints, currentMonthKey);
+            const chosenB = pickPerson(regularQueueB, 'regularPoints', currentBlockWorkers, peopleStats, lastDayWorkers, isMiddle, isEdge, currentMonthKey);
             if (chosenB) {
                 chosenB.regularPoints += earnedPoints;
-                if (earnedPoints === config.middlePoints) chosenB.interruptedLwCount += 1;
+                if (isMiddle) chosenB.middleLwCount += 1;
+                if (isEdge) chosenB.edgeLwCount += 1;
                 chosenB.monthlyCounts[currentMonthKey] = (chosenB.monthlyCounts[currentMonthKey] || 0) + 1;
                 chosenB.lastRegularDuty = new Date(d);
                 chosenB.regularDates.push(dateStr);
@@ -310,7 +311,9 @@ export default function DutyScheduler() {
           generatedScheduleMap[dateStr] = {
             assignments: assignments,
             type: isRegular && dayOfWeek !== 6 ? 'holiday' : 'regular',
-            earnedPoints: earnedPoints
+            earnedPoints: earnedPoints,
+            isMiddle: isMiddle,
+            isEdge: isEdge
           };
           
           lastDayWorkers = new Set(assignments.map(a => a.id));
@@ -373,10 +376,9 @@ export default function DutyScheduler() {
 
       const wb = window.XLSX.utils.book_new();
 
-      // 第一分頁：積分總覽與統計
       const summaryData = [
         ["累積積分總覽表"],
-        ["人員", "組別", "常規班積分", "週日班積分", "總積分", `中斷連假 (+${config.middlePoints}分) 次數`]
+        ["人員", "組別", "常規班積分", "週日班積分", "總積分", "連假中間次數", "連假頭尾次數"]
       ];
       stats.forEach(p => {
         summaryData.push([
@@ -385,37 +387,34 @@ export default function DutyScheduler() {
           p.regularPoints,
           p.sundayPoints,
           p.regularPoints + p.sundayPoints,
-          p.interruptedLwCount
+          p.middleLwCount,
+          p.edgeLwCount
         ]);
       });
       
-      // 在 Excel 中留一些空行，再附上特殊加分明細(等同柱狀圖細節)
       summaryData.push([]);
       summaryData.push(["各人員特殊加分明細 (排班日紀錄)"]);
       stats.forEach(p => {
         summaryData.push([`【${p.name}】 常規班特殊積分日:`]);
         const regDetails = p.regularDates
-          .map(d => ({ date: d, pts: dutyPointsMap[d] || 1 }))
-          .filter(item => item.pts > 1)
-          .map(item => `${item.date} (+${item.pts}分)`);
+          .map(d => ({ date: d, meta: dutyMetaMap[d] }))
+          .filter(item => item.meta && (item.meta.isMiddle || item.meta.isEdge))
+          .map(item => `${item.date} (${item.meta.isMiddle ? '中間' : '頭尾'}) (+${item.meta.points}分)`);
         summaryData.push(regDetails.length > 0 ? regDetails : ["無"]);
         
         summaryData.push([`【${p.name}】 週日班特殊積分日:`]);
         const sunDetails = p.sundayDates
-          .map(d => ({ date: d, pts: dutyPointsMap[d] || 1 }))
-          .filter(item => item.pts > 1)
-          .map(item => `${item.date} (+${item.pts}分)`);
+          .map(d => ({ date: d, meta: dutyMetaMap[d] }))
+          .filter(item => item.meta && (item.meta.isMiddle || item.meta.isEdge))
+          .map(item => `${item.date} (${item.meta.isMiddle ? '中間' : '頭尾'}) (+${item.meta.points}分)`);
         summaryData.push(sunDetails.length > 0 ? sunDetails : ["無"]);
         summaryData.push([]);
       });
 
       const summarySheet = window.XLSX.utils.aoa_to_sheet(summaryData);
-      
-      // 調整首頁欄寬
       summarySheet['!cols'] = [{wch: 20}, {wch: 10}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 25}];
       window.XLSX.utils.book_append_sheet(wb, summarySheet, "積分總覽");
 
-      // 分頁：各月份排班表
       const { startDate, duration } = config;
       const [sYear, sMonth] = startDate.split('-').map(Number);
       let currentDate = new Date(sYear, sMonth - 1, 1);
@@ -451,9 +450,8 @@ export default function DutyScheduler() {
             if (isAssigned) {
               const assignmentDetail = dutyInfo.assignments.find(a => a.id === person.id);
               let cellText = dutyInfo.type !== 'sunday' ? assignmentDetail.group : '✓';
-              if (dutyInfo.earnedPoints > 1) {
-                cellText += ` (+${dutyInfo.earnedPoints})`;
-              }
+              if (dutyInfo.isMiddle) cellText += ` (中間 +${dutyInfo.earnedPoints})`;
+              if (dutyInfo.isEdge) cellText += ` (頭尾 +${dutyInfo.earnedPoints})`;
               rowData.push(cellText);
             } else {
               rowData.push("");
@@ -463,9 +461,8 @@ export default function DutyScheduler() {
         }
 
         const monthSheet = window.XLSX.utils.aoa_to_sheet(monthData);
-        // 調整月份表欄寬
-        const cols = [{wch: 20}]; // 日期欄位
-        stats.forEach(() => cols.push({wch: 15})); // 人員欄位
+        const cols = [{wch: 20}];
+        stats.forEach(() => cols.push({wch: 15}));
         monthSheet['!cols'] = cols;
 
         window.XLSX.utils.book_append_sheet(wb, monthSheet, `${currentYear}年${currentMonthIndex + 1}月`);
@@ -489,16 +486,13 @@ export default function DutyScheduler() {
     for (let m = 0; m < duration; m++) {
       const currentYear = currentDate.getFullYear();
       const currentMonthIndex = currentDate.getMonth();
-      
       const daysInMonth = new Date(currentYear, currentMonthIndex + 1, 0).getDate();
       const firstDayOfWeek = new Date(currentYear, currentMonthIndex, 1).getDay(); 
       
       let days = [];
-      
       for (let i = 0; i < firstDayOfWeek; i++) {
         days.push(null);
       }
-      
       for (let i = 1; i <= daysInMonth; i++) {
         days.push(new Date(currentYear, currentMonthIndex, i));
       }
@@ -576,16 +570,16 @@ export default function DutyScheduler() {
                               }`}>
                                 {dutyInfo.type !== 'sunday' && <span className="mr-0.5 opacity-70">[{assignee.group}]</span>}
                                 {assignee.name}
-                                {dutyInfo.earnedPoints > 1 && (
+                                {(dutyInfo.isMiddle || dutyInfo.isEdge) && (
                                   <span 
                                     className={`ml-1 text-[10px] px-1 rounded shadow-sm border ${
-                                      dutyInfo.earnedPoints === config.middlePoints 
+                                      dutyInfo.isMiddle 
                                         ? 'text-red-600 bg-red-100 border-red-200' 
                                         : 'text-orange-600 bg-orange-100 border-orange-200'
                                     }`} 
-                                    title={dutyInfo.earnedPoints === config.middlePoints ? "連假中斷補償" : "連假頭尾補償"}
+                                    title={dutyInfo.isMiddle ? "連假中間" : "連假頭尾"}
                                   >
-                                    +{dutyInfo.earnedPoints}
+                                    {dutyInfo.isMiddle ? '中間' : '頭尾'}{dutyInfo.earnedPoints > 1 ? `(+${dutyInfo.earnedPoints})` : ''}
                                   </span>
                                 )}
                               </span>
@@ -698,13 +692,13 @@ export default function DutyScheduler() {
                                 }`}>
                                   {dutyInfo.type !== 'sunday' ? assignmentDetail.group : <CheckCircle2 className="w-4 h-4" />}
                                 </div>
-                                {dutyInfo.earnedPoints > 1 && (
-                                  <span className={`text-[10px] font-bold px-1.5 rounded border leading-none py-0.5 ${
-                                    dutyInfo.earnedPoints === config.middlePoints 
+                                {(dutyInfo.isMiddle || dutyInfo.isEdge) && (
+                                  <span className={`text-[10px] font-bold px-1.5 rounded border leading-none py-0.5 mt-0.5 ${
+                                    dutyInfo.isMiddle 
                                       ? 'text-red-600 bg-red-50 border-red-200' 
                                       : 'text-orange-600 bg-orange-50 border-orange-200'
                                   }`}>
-                                    +{dutyInfo.earnedPoints}分
+                                    {dutyInfo.isMiddle ? '中間' : '頭尾'} {dutyInfo.earnedPoints > 1 && `+${dutyInfo.earnedPoints}分`}
                                   </span>
                                 )}
                               </div>
@@ -847,7 +841,7 @@ export default function DutyScheduler() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">中斷連假積分</label>
+              <label className="text-sm font-medium text-slate-600">連假中間積分</label>
               <input 
                 type="number" 
                 name="middlePoints"
@@ -910,7 +904,7 @@ export default function DutyScheduler() {
               <p className="flex items-center text-red-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />嚴格排除：農曆春節期間</p>
               <p className="flex items-center text-blue-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />常規排班：週六、連假與國定假日 (A、B工區各派1人)</p>
               <p className="flex items-center text-emerald-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />週日排班：所有非春節週日 (單人不分區，獨立計算)</p>
-              <p className="flex items-center text-purple-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />相鄰防呆：相鄰排班日強制不重複，並優先將中斷連假(+{config.middlePoints}分)平均分配</p>
+              <p className="flex items-center text-purple-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />相鄰防呆：相鄰排班日強制不重複，並優先將「連假中間」與「連假頭尾」平均分配</p>
               <p className="flex items-center text-amber-600 font-medium"><CheckCircle2 className="w-4 h-4 mr-2" />單月防呆：強制將同月班次平均攤平，避免單月集中排班過多次</p>
             </div>
             <button 
@@ -922,6 +916,7 @@ export default function DutyScheduler() {
           </div>
         </div>
 
+        {}
         {hasGenerated && (
           <div className="mt-8 space-y-4">
             
@@ -958,7 +953,6 @@ export default function DutyScheduler() {
                 {config.viewMode === 'table' ? renderTableView() : renderCalendars()}
               </div>
 
-              {/* 新增：累積積分總覽表 */}
               <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="bg-slate-50 border-b border-slate-200 p-4">
                   <h2 className="text-lg font-bold flex items-center text-slate-800">
@@ -974,6 +968,8 @@ export default function DutyScheduler() {
                         <th className="px-4 py-3 font-bold border-r border-slate-200 text-center w-24">組別</th>
                         <th className="px-4 py-3 font-bold border-r border-slate-200 text-center">常規班積分</th>
                         <th className="px-4 py-3 font-bold border-r border-slate-200 text-center">週日班積分</th>
+                        <th className="px-4 py-3 font-bold border-r border-slate-200 text-center">連假中間</th>
+                        <th className="px-4 py-3 font-bold border-r border-slate-200 text-center">連假頭尾</th>
                         <th className="px-4 py-3 font-bold text-center">總積分</th>
                       </tr>
                     </thead>
@@ -995,6 +991,12 @@ export default function DutyScheduler() {
                           <td className="px-4 py-2 border-r border-slate-200/60 text-center text-emerald-600 font-bold text-base">
                             {person.sundayPoints}
                           </td>
+                          <td className="px-4 py-2 border-r border-slate-200/60 text-center font-bold text-red-600">
+                            {person.middleLwCount}次
+                          </td>
+                          <td className="px-4 py-2 border-r border-slate-200/60 text-center font-bold text-orange-600">
+                            {person.edgeLwCount}次
+                          </td>
                           <td className="px-4 py-2 text-center text-slate-900 font-black text-lg bg-slate-50/50">
                             {person.regularPoints + person.sundayPoints}
                           </td>
@@ -1005,6 +1007,7 @@ export default function DutyScheduler() {
                 </div>
               </div>
 
+              {}
               <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="bg-slate-50 border-b border-slate-200 p-4">
                   <h2 className="text-lg font-bold flex items-center text-slate-800">
@@ -1023,9 +1026,14 @@ export default function DutyScheduler() {
                           <span className="font-bold text-slate-700 text-sm">
                             {person.name} <span className="text-slate-400 font-normal text-xs ml-0.5">({person.group}區)</span>
                           </span>
-                          <span className="text-[11px] font-bold text-red-500 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded-sm mt-0.5 inline-block w-fit">
-                            中斷連假 (+{config.middlePoints}分): {person.interruptedLwCount} 次
-                          </span>
+                          <div className="flex gap-1 mt-0.5">
+                            <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-100 px-1 py-0.5 rounded-sm">
+                              中間: {person.middleLwCount}次
+                            </span>
+                            <span className="text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-1 py-0.5 rounded-sm">
+                              頭尾: {person.edgeLwCount}次
+                            </span>
+                          </div>
                         </div>
                       </div>
                       
@@ -1035,16 +1043,25 @@ export default function DutyScheduler() {
                           <div className="text-xl font-black text-blue-600 mb-2 leading-none">{person.regularPoints}</div>
                           <div className="w-full flex flex-col items-center justify-end">
                             {person.regularDates.slice().reverse().map((dateStr, idx) => {
-                              const pts = dutyPointsMap[dateStr] || 1;
+                              const meta = dutyMetaMap[dateStr] || {points: 1, isMiddle: false, isEdge: false};
+                              const pts = meta.points;
+                              const isMid = meta.isMiddle;
+                              const isEdg = meta.isEdge;
+                              
+                              let bgClass = "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100";
+                              if (isMid) bgClass = "bg-red-100 border-red-300 text-red-800 hover:bg-red-200";
+                              else if (isEdg) bgClass = "bg-orange-100 border-orange-300 text-orange-800 hover:bg-orange-200";
+
                               const baseH = 28; 
                               const gap = 4; 
                               const height = pts > 1 ? (baseH * pts + gap * (pts - 1)) : baseH; 
                               return (
                                 <div key={`reg-${idx}`} 
-                                     className="w-full max-w-[80px] bg-blue-50 border border-blue-200 text-blue-700 flex flex-col items-center justify-center rounded-md shadow-sm hover:bg-blue-100 transition-colors mb-1"
+                                     className={`w-full max-w-[80px] border flex flex-col items-center justify-center rounded-md shadow-sm transition-colors mb-1 ${bgClass}`}
                                      style={{ height: `${height}px` }}>
                                   <span className="text-[11px] font-semibold">{dateStr.substring(5).replace('-', '/')}</span>
-                                  {pts > 1 && <span className={`font-bold ml-0.5 text-[10px] leading-none mt-0.5 ${pts === config.middlePoints ? 'text-red-500' : 'text-orange-500'}`}>+{pts}</span>}
+                                  {(isMid || isEdg) && <span className={`font-bold text-[9px] leading-none mt-0.5 ${isMid ? 'text-red-600' : 'text-orange-600'}`}>{isMid ? '中間' : '頭尾'}</span>}
+                                  {pts > 1 && <span className={`font-bold ml-0.5 text-[9px] leading-none mt-0.5 opacity-80`}>+{pts}</span>}
                                 </div>
                               );
                             })}
@@ -1058,22 +1075,32 @@ export default function DutyScheduler() {
                           <div className="text-xl font-black text-emerald-600 mb-2 leading-none">{person.sundayPoints}</div>
                           <div className="w-full flex flex-col items-center justify-end">
                             {person.sundayDates.slice().reverse().map((dateStr, idx) => {
-                              const pts = dutyPointsMap[dateStr] || 1;
+                              const meta = dutyMetaMap[dateStr] || {points: 1, isMiddle: false, isEdge: false};
+                              const pts = meta.points;
+                              const isMid = meta.isMiddle;
+                              const isEdg = meta.isEdge;
+
+                              let bgClass = "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100";
+                              if (isMid) bgClass = "bg-red-100 border-red-300 text-red-800 hover:bg-red-200";
+                              else if (isEdg) bgClass = "bg-orange-100 border-orange-300 text-orange-800 hover:bg-orange-200";
+
                               const baseH = 28;
                               const gap = 4;
                               const height = pts > 1 ? (baseH * pts + gap * (pts - 1)) : baseH;
                               return (
                                 <div key={`sun-${idx}`} 
-                                     className="w-full max-w-[80px] bg-emerald-50 border border-emerald-200 text-emerald-700 flex flex-col items-center justify-center rounded-md shadow-sm hover:bg-emerald-100 transition-colors mb-1"
+                                     className={`w-full max-w-[80px] border flex flex-col items-center justify-center rounded-md shadow-sm transition-colors mb-1 ${bgClass}`}
                                      style={{ height: `${height}px` }}>
                                   <span className="text-[11px] font-semibold">{dateStr.substring(5).replace('-', '/')}</span>
-                                  {pts > 1 && <span className={`font-bold ml-0.5 text-[10px] leading-none mt-0.5 ${pts === config.middlePoints ? 'text-red-500' : 'text-orange-500'}`}>+{pts}</span>}
+                                  {(isMid || isEdg) && <span className={`font-bold text-[9px] leading-none mt-0.5 ${isMid ? 'text-red-600' : 'text-orange-600'}`}>{isMid ? '中間' : '頭尾'}</span>}
+                                  {pts > 1 && <span className={`font-bold ml-0.5 text-[9px] leading-none mt-0.5 opacity-80`}>+{pts}</span>}
                                 </div>
                               );
                             })}
                           </div>
                           <div className="text-xs font-bold text-slate-500 mt-3 bg-slate-50 px-2 py-0.5 rounded">週日</div>
                         </div>
+
                       </div>
                     </div>
                   ))}
